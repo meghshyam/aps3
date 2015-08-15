@@ -3,7 +3,7 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{a4wide}
-\usepackage{multirow}
+\usepackage{multirow} 
 \usepackage{anysize}
 \usepackage{iitbcs}
 \usepackage{latexsym}
@@ -129,6 +129,129 @@ presents new challenges.  We provide methods to get past such hurdles.
 
 \section{Quadcopter-based Stagnant Water Identification}
 
+The method in ~\cite{santana12} for detection of
+water relies on the chaotic nature of water's dynamic texture to
+exploit a measure of entropy over the trajectories obtained from
+optical flow trackers over several frames. \cite{zhang10} has
+introduced a descriptor which is tolerant to the flip transformation
+and even non-rigid distortions, such as ripple effects.  \emph{These
+  methods and others in the literature focus on the turbulent aspects
+  of water}, largely absent in our application that focuses on
+stagnant water.  Our method is closest to that of Rankin et
+al.~\cite{rankin2004daytime, rankin11} who have implemented a rule-based water
+detector based on sky reflections.  These rules are established
+based on an analysis of images captured in wide-open areas on
+cross-country terrain. Not only do we have new methods, \emph{our
+datasets are captured in urban areas using a quadcopter and thus these
+rules seem unlikely to be readily applicable.}
+
+\subsection{Methodology}
+Our method is based on a combination of color based method with an optical flow
+based method.  We establish the need for the combination in the first two subsections.
+
+\textbf{Appearance-based Detection}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1} \hfill
+  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_H} 
+
+  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_S} \hfill
+  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_V}
+  \caption{An image (top left) and the HSV components.  The puddle has
+    low saturation (bottom left) but high intensity (bottom right).
+    The hue is indeterminable and is based on the environment.}
+  \label{fig:HSV}
+\end{figure}
+
+Under ambient lighting conditions, puddle areas display high
+brightness and low saturation as can be seen in
+Fig.~\ref{fig:HSV}. Features based on these are fed to an SVM
+classifier. Training an SVM is a labour intensive task.  To reduce the
+effort, we have developed a tool shown in Fig.~\ref{fig:training}. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figures/trainingData.pdf}
+  \caption{The process for creation of training data. The user selects
+    the stagnant water area by drawing a contour to produce `positive'
+    and `negative'  data.}
+  \label{fig:training}
+\end{figure}
+
+\textbf{Failure of SVM-based methods:} The SVM detector is good at
+detecting regions of sky reflected off a puddle.  In the HSV color
+space, these regions have low saturation (S) and high brightness (V)
+values, and are picked up with high reliability by the HSV histogram
+feature based SVM detector. However, false negatives are also produced
+since other reflected regions such as trees, buildings, etc. are
+usually classified as non-puddle regions as many of these
+characteristics is shared by negative images in the training data set.
+
+
+\subsection{Optical flow based Detection}
+Fortunately our images are captured by a moving quadcopter.  The
+optical flow measures apparent motion of objects in a scene caused by
+relative motion between camera and object. The magnitude of the
+optical flow is high for objects that are close in comparison to
+objects at a distance.  Fig.~\ref{fig:optical_flow} shows the
+magnitude of optical flow calculated from two images.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_1} \hfill
+  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_2} \hfill
+  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_optical_flow}
+  \caption{Optical Flow. Left, Middle: Frames taken from positions
+    which are $d$ units apart in 3D world. $ 0.01 \leq d \leq 0.1$. Right:
+    Magnitude of optical flow. We observe that the magnitude of optical
+    flow in the reflective parts of the puddle is relatively low.}
+  \label{fig:optical_flow}
+\end{figure}
+
+A recent thesis \cite{Liu11Thesis} has one of the state of the art
+algorithm for optical flow. One requirement is the need for
+spatio-temporal smoothness constraint which can be challenging because
+of the jerky movement of the UAV.  To resolve this, we use the
+Inertial Measurement Unit (IMU) data available on the quadcopter to
+synchronize positional information with the video sequence captured by
+quadcopter. In short, we select the frame pair which are spatially the
+closest, among a set of competing temporally adjacent frames.
+
+\textbf{Failure of optical flow:} Optical flow is essentially being
+used in a depth from parallax mode to exploit the fact that still
+puddles behave like mirrors. The scenery reflected by such puddles is
+usually at a much greater depth than the immediate surroundings of the
+puddle.  Optical flow is largely independent of hue and saturation.
+For the same reason, however, optical flow as a means of detecting
+puddles will fail to report true positives when the object that is
+being reflected is close by. In such cases, the saturation and
+intensity values are useful.
+
+Yet another reason for the failure for the optical flow is the
+inability to distinguish true ``far away'' regions versus imagined far
+away regions due to the mirror-like properties of water.  To handle
+these false positives, we devise a horizon mask based on the principle
+that water flows down.
+
+\subsection{Combined approach}
+\textbf{Horizon Mask:} The change in depth for far-away scenes as well
+as their reflections on puddle, in consecutive frames, are hard to
+distinguish. In previous work \cite{rankin11} such issues are avoided
+by discarding a fixed-portion of image corresponding to far-off
+regions, enforced by constrained input capture method. Due to
+inapplicability of such constraints in the comparatively agile input
+capture conditions of quadcopter, features derived from urban
+environment are utilized for finding plausible puddle regions. In
+urban setting, the high availability of structures in surroundings,
+having distinctly flat surfaces and rectilinear silhouettes, enables
+use of edge-detection based methods to bound planar regions that can
+contain puddle. Applying the Hough transform with calibrated
+parameters followed by length-based selection of lines detected, a
+upper boundary for puddle region called `Horizon' is found. The
+Horizon is in turn used to create a binary mask to be applied to local
+scores from other techniques before normalization.
+
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\textwidth]{figures/overall_workflow.pdf}
@@ -136,6 +259,66 @@ presents new challenges.  We provide methods to get past such hurdles.
   \label{fig:workflow}
 \end{figure}
 
-\newpage
+These observations suggested a novel combined approach as sketched
+in Fig.~\ref{fig:workflow}.
 
+\subsection{Experiments and Results}
+
+All our experiments have been completed with the inexpensive consumer
+quadcopter called Parrot's AR Drone. We remark that one should not
+compare expensive military grade drones with such inexpensive drones.
+For the purpose of showing the efficacy of this paper, we also took a
+picture of the scene from a distance with a 5 mega-pixel camera for
+the reader to better understand the scene.  We covered urban places
+such as terraces, constructions sites, building backyards,
+pumping stations, and so on.  We have captured around eight different
+types of datasets, each having around two-three minutes of video
+(around 3000 frames each). 
+
+\textbf{Comparison:} We compare our method to \cite{rankin2004daytime} on
+representative images since the methods in \cite{rankin11} do not apply. 
+%See Fig.~\ref{fig:comparison}. 
+It can be seen
+from Fig.~\ref{fig:comparison} that in all images, \cite{rankin2004daytime} is
+confusing bright patches as puddle patches (note red patches on walls, sky etc. in middle column in Fig.~\ref{fig:comparison}). Also, \cite{rankin2004daytime} is
+not able to detect textured puddle images (as seen in the first row in
+Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red hue in the output image. 
+So, darker the red tinge, higher the confidence in detected water region. )
+
+\begin{figure}
+  \centering
+   
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_73/IMG_PAIR_124_1} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_73/output_124_jpl2} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_73/output_124}
+
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_81/IMG_PAIR_1_1} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_81/output_1_jpl2} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_81/output_1}
+
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_82/IMG_PAIR_192_1} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_82/output_192_jpl2} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_82/output_192}
+  
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_83/IMG_PAIR_130_1} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_83/output_130_jpl2} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_83/output_130}
+
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_63full/IMG_PAIR_102_1} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_63full/output_102_jpl2} \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/results/dataset_63full/output_102}
+  	
+  \caption{Comparison of proposed method with \cite{rankin2004daytime}. Confidence in detection is indicated by red hue in the output image. 
+So, darker the red tinge, higher the confidence in detected water regions. \textbf{Left:} Original Image,
+    \textbf{Middle:} Output of \cite{rankin2004daytime} \textbf{Right:}
+    Proposed method. It can be seen that \cite{rankin2004daytime} is unable to
+    detect textured puddle regions. Also, several false positives are
+    seen to appear in the middle row.  Our method is sedate and
+    sufficient to alert health workers.}
+\label{fig:comparison}
+\end{figure}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{egbib}
 \end{document}
