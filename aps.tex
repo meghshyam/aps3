@@ -114,7 +114,7 @@ presents new challenges.  We provide methods to get past such hurdles.
 \section{Mosaicing Scenes with Vacant Spaces}
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{figures/Workflow} 
+  \includegraphics[width=\textwidth]{mosaicing/figures/Workflow} 
   \caption{ \label{fig:workflow} Overview: Input imagery is
     systematically acquired (top left) by a quadcopter.  In the next
     step, interesting images are found by clustering the video into
@@ -153,11 +153,13 @@ based method.  We establish the need for the combination in the first two subsec
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1} \hfill
-  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_H} 
+  \includegraphics[width=0.4\linewidth]{stagnantWater/figures/IMG_PAIR_27_1}
+  \hfill
+  \includegraphics[width=0.4\linewidth]{stagnantWater/figures/IMG_PAIR_27_1_H} 
 
-  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_S} \hfill
-  \includegraphics[width=0.4\linewidth]{figures/IMG_PAIR_27_1_V}
+  \includegraphics[width=0.4\linewidth]{stagnantWater/figures/IMG_PAIR_27_1_S}
+  \hfill
+  \includegraphics[width=0.4\linewidth]{stagnantWater/figures/IMG_PAIR_27_1_V}
   \caption{An image (top left) and the HSV components.  The puddle has
     low saturation (bottom left) but high intensity (bottom right).
     The hue is indeterminable and is based on the environment.}
@@ -172,7 +174,7 @@ effort, we have developed a tool shown in Fig.~\ref{fig:training}.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\linewidth]{figures/trainingData.pdf}
+  \includegraphics[width=0.9\linewidth]{stagnantWater/figures/trainingData.pdf}
   \caption{The process for creation of training data. The user selects
     the stagnant water area by drawing a contour to produce `positive'
     and `negative'  data.}
@@ -199,9 +201,11 @@ magnitude of optical flow calculated from two images.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_1} \hfill
-  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_2} \hfill
-  \includegraphics[width=0.32\linewidth]{figures/IMG_PAIR_27_optical_flow}
+  \includegraphics[width=0.32\linewidth]{stagnantWater/figures/IMG_PAIR_27_1}
+  \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/figures/IMG_PAIR_27_2}
+  \hfill
+  \includegraphics[width=0.32\linewidth]{stagnantWater/figures/IMG_PAIR_27_optical_flow}
   \caption{Optical Flow. Left, Middle: Frames taken from positions
     which are $d$ units apart in 3D world. $ 0.01 \leq d \leq 0.1$. Right:
     Magnitude of optical flow. We observe that the magnitude of optical
@@ -234,9 +238,10 @@ away regions due to the mirror-like properties of water.  To handle
 these false positives, we devise a horizon mask based on the principle
 that water flows down.
 
-\subsection{Combined approach}
+\textbf{Combined approach}
+
 \textbf{Horizon Mask:} The change in depth for far-away scenes as well
-as their reflections on puddle, in consecutive frames, are hard to
+as their ref	lections on puddle, in consecutive frames, are hard to
 distinguish. In previous work \cite{rankin11} such issues are avoided
 by discarding a fixed-portion of image corresponding to far-off
 regions, enforced by constrained input capture method. Due to
@@ -254,7 +259,7 @@ scores from other techniques before normalization.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{figures/overall_workflow.pdf}
+  \includegraphics[width=\textwidth]{stagnantWater/figures/overall_workflow.pdf}
   \caption{Overall architecture.}
   \label{fig:workflow}
 \end{figure}
@@ -280,9 +285,10 @@ representative images since the methods in \cite{rankin11} do not apply.
 %See Fig.~\ref{fig:comparison}. 
 It can be seen
 from Fig.~\ref{fig:comparison} that in all images, \cite{rankin2004daytime} is
-confusing bright patches as puddle patches (note red patches on walls, sky etc. in middle column in Fig.~\ref{fig:comparison}). Also, \cite{rankin2004daytime} is
-not able to detect textured puddle images (as seen in the first row in
-Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red hue in the output image. 
+confusing  bright patches as puddle patches (note red patches on walls, sky etc.
+in middle column in Fig.~\ref{fig:comparison}). Also, \cite{rankin2004daytime}
+is not able to detect textured puddle images (as seen in the first row in
+Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red hue in the output image.
 So, darker the red tinge, higher the confidence in detected water region. )
 
 \begin{figure}
