@@ -51,7 +51,7 @@ I express deep and sincere gratitude to Prof. Sharat Chandran and Prof.
 Michael Brown for providing constant direction and guidance. I am also
 very much grateful to Prof. David Hsu for giving me access to his lab and
 equipments. I am also thankful to Mr. Abhishek Chakrborty and Mr. Ravi Chalasani
-for their help in stangnant water detection project.
+for their help in stagnant water detection project.
 
 \begin{flushright}
 Meghshyam G. Prasad
@@ -67,7 +67,7 @@ such scenarios to take photos of an object which is otherwise out of reach of no
 camera. There are two problems involved in it: first to track the given object
 and second to take ``good'' pictures of it. In my last APS we discussed 
 about the first problem. Here, we will see how to take good pictures and use it for
-variouos applications.
+various applications.
 
 One of the use case where we may use quadcopter for imaging is to
 capture a panaroma of big wall (or any such planar object). In such cases, it
@@ -81,7 +81,7 @@ We describe a framework that is able to handle this unique input by
 leveraging the availability of the inertial measurement unit (IMU)
 data from the quadcopter that is synchronized with the input images.
 We use the IMU data for two purposes: first to select images which can
-be stiched together. Second, in combination with coarse stereo reconstruction,
+be stitched together. Second, in combination with coarse stereo reconstruction,
 we determine appropriate portions of the images to complete the panorama. We
 demonstrate the efficacy of our approach on a number of input sequences that
 cannot to be mosaiced by existing methods.
@@ -678,12 +678,13 @@ identifying the location of these traps.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\linewidth]{stagnantWater/figures/teaser.pdf}
-\label{teaser} \caption{(a) Our hovering quadcopter (b) A typical
+\caption{(a) Our hovering quadcopter (b) A typical
   rooftop on campus (c) Earlier method \cite{rankin2004daytime} applied, and
   output marked in red (d) Our output. Notice (marked as black oval in
   (c)) that \cite{rankin2004daytime} confuses non-puddle patches as puddle.
   Also, note (marked as green ellipse in (d)) that \cite{rankin2004daytime} is
   not able to detect puddle which are dark.}
+\label{teaser} 
 \end{figure}
 
 One of the major reasons behind the growth of mosquitoes is the
@@ -808,7 +809,7 @@ that water flows down.
 \noindent\textbf{Combined approach}
 
 \textbf{Horizon Mask:} The change in depth for far-away scenes as well
-as their ref	lections on puddle, in consecutive frames, are hard to
+as their reflections on puddle, in consecutive frames, are hard to
 distinguish. In previous work \cite{rankin11} such issues are avoided
 by discarding a fixed-portion of image corresponding to far-off
 regions, enforced by constrained input capture method. Due to
