@@ -152,7 +152,7 @@ Panoramic image stitching (alternatively, image mosaicing) is a
 well-studied problem in the field of computer vision.  Representative
 works include~\cite{Milgram1975}, \cite{Milgram1977}, \cite{Capel},
 \cite{Szeliski1997} \cite{Brown07} \cite{Brown03}.  A full discussion
-on related works is outside the scope of this paper, readers are
+on related works is outside the scope of this report, readers are
 referred to~\cite{Szeliski05imagealignment} for an excellent survey.
 Given the maturity of this area, there are various freeware as well as
 commercial software available for performing image stitching; most
@@ -178,9 +178,9 @@ additional camera hardware.
 All of the image mosaicing methods work only when there is a
 ``intersection'' in feature space of images to be stitched. When there
 are ``gaps'' (either physical or due to lack of features) between
-images to be stitched it is not clear how to perform the stitching. In
-this paper, we discuss how to use the available IMU data that
-accompanies our input images to help overcome these problems.
+images to be stitched it is not clear how to perform the stitching. We discuss
+how to use the available IMU data that accompanies our input images to help
+overcome these problems.
 
 \subsection{Methodology}
 Our goal is to compute a panorama of a scene lying on
@@ -227,7 +227,7 @@ the quadcopter, and it is programmed to traverse the area in a snake
 like raster scan fashion.  There are various control aspects involved
 in sending a quadcopter; in outdoor areas, the quadcopter is impacted
 by wind and it might lose its way.  The control aspects of the
-quadcopter is beyond the scope of this paper.
+quadcopter is discussed in Section \ref{sec:furtherWork}.
 
 The quadcopter returns with a video of the scene.  Any short video of
 about a minute or more when given to a stitching program such as
@@ -381,23 +381,19 @@ Using the stereo disparity formula we can ``place,'' from the view
 point of A, the image captured from B, thereby creating a
 super-panorama.
 
-\section{Experiments and Results}
+\subsection{Experiments and Results}
 \label{sec:results}
 
-% MSB - what ground truth?  This is confusing, what do you mean by ground truth?
 All our experiments have been completed with the inexpensive consumer
 quadcopter called a Parrot's AR Drone 2.0. We have used the ROS based
 ARDrone Autonomy Driver to communicate with the drone. For the purpose
-of showing the efficacy of this paper, we also took a picture of the
+of showing the efficacy of our method, we also took a picture of the
 scene from a distance with a 5 mega-pixel camera to better understand
 the scene.
 
 We have implemented our algorithm in C++ using the OpenCV library
 (OpenCV 2.4.9). Experiments were performed on a PC with Intel Core i7
-processor(@3.4GHz) and 8GB RAM.  The source code to produce
-interesting images from a video, and to generate the super-panorama,
-as well as the data sets used in this paper will be made publicly
-available.
+processor(@3.4GHz) and 8GB RAM.
 
 \noindent\textbf{Selecting Images}
 
@@ -462,7 +458,7 @@ Autostitch, Photoshop can correctly stitch images selected by our algorithm
 \caption{ (a) An outdoor scene captured by a standard camera.  (b) Salient image selection from the set of
   approximately 9000 images using positional information. (c) Output of
   Autostitch \cite{autostitch} on the images selected by our algorithm. (d) Output of Adobe Photoshop CS6
-  \cite{photoshop} on the selected images. (e) Output from this paper.}
+  \cite{photoshop} on the selected images. (e) Output of our method.}
 \label{fig:validResults}
 \end{figure}
 
@@ -492,8 +488,9 @@ There were two disconnected components in the resulting graph.
 Autostitch was unable to produce any reasonable output as seen in
 Figure~\ref{fig:teaser}.  The scene, captured from a distance is also
 shown.  One can see a better orthographic view of the posters.
+\vspace{0.5cm}
 
-\subsection{Outdoor Imagery with Vacant Spaces}
+\noindent\textbf{Outdoor Imagery with Vacant Spaces}
 Our next set of experiments were conducted in an outdoor
 environment. The input stream had about 12000 images. The selection
 algorithm pruned the video into $N=30$ images. A sample of the
@@ -558,7 +555,7 @@ algorithm. As there are vacant spaces, Autostitch~\cite{autostitch} as well as
 Photoshop~\cite{photoshop} are not able to stitch images accurately. In
 contrast, since we use positional data, our output is an acceptable mosaic.
 
-\begin{figure*}[h!]
+\begin{figure}[h!]
 \centering
 \includegraphics[width=0.85\linewidth]{mosaicing/results/Purple_red}
 \caption{(a) An outdoor scene captured by a standard camera in an
@@ -572,9 +569,83 @@ contrast, since we use positional data, our output is an acceptable mosaic.
   the selected images. We are able to join two posters (separated by
   vacant space) using IMU data.}
 \label{fig:results2}
-\end{figure*}
-\subsection{Path Planning}
+\end{figure}
+
+\section{Planned Work in Mosaicing through Quadcopter}
+In this section we will see planned advancements in mosaicing through
+quadcopter.
+\subsection{Path Planning of Quadcopter}
+\label{sec:furtherWork}
+We encountered following problems while controlling quadcopter manually:
+\begin{itemize}
+  \item As manual control is not smooth, the most of the captured images are
+  blurred.
+  \item Coverage (area covered in unit time) is not uniform. 
+  \item We may not be able to cover desired area completely (and exactly) due to
+  manual errors.
+\end{itemize}
+So, the solution for these problems is planning the trajectory of the quadcopter
+in order to ``cover'' the desired area. To achieve this, we have started
+developing a tool based on PTAM (Parallel Tracking and Mapping).
+Following work is done till date.
+
+\textbf{UI :-} User may click points to define area he/she wants to cover on
+planar region. Keypoints which are closest to clicked points are found and 2D convex
+hull of those keypoints is shown to user for confirmation. User may add/remove
+points; accordingly updated 2D convex hull will be shown.
+		
+\textbf{Path Planning :-} Once user confirms the area to cover, plane
+equation is found using the keypoints inside 2D convex hull. Later, corners of
+2D convex hull are projected on the calculated plane. Now, grid of overlapping
+cells (fifty percent overlap in horizontal as well as vertical direction) is
+formed inside the area formed by projected corners of convex hull, as shown in
+Figure \ref{fig:pathPlanning}. Currently, width and height of each cell is fixed
+but can be taken from user in future.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{furtherWork/pathPlanning}
+\caption{Schematic of path planning of quadcopter for single plane.}
+\label{fig:pathPlanning}
+\end{figure}
+
+Basically, each cell in a grid represents area to covered in single frame.
+Finally, camera extrinsics i.e., camera position is calculated for each cell in
+the grid such that area in that cell will be covered in one frame. Accordingly,
+quadcopter position is calculated for each calculated camera position.
+
+Then, we maneuver quadcopter along the estimated trajectory and record
+photographs at specified points.
+
+\textbf{Further Work :-} We need to analyze the quality of images recorded at
+specified points in order to find its usefulness for mosaicing. Accordingly we
+may have to adapt path planning algorithm. 
+
 \subsection{Multi-planar Cases}
+In some cases, our area to be covered is actually divided in multiple planes
+which are parallel to each other, but at different depths (e.g., poster boards
+kept at different depths). So, instead of fitting single plane, we need to fit multiple
+planes and repeat process (from grid formation) for each plane.
+
+There may be some case where multiple planes will be at certain angle with each
+other. There might be two subcases: one in which quadcopter is surrounded by
+multiple planes (Figure \ref{fig:pathInnerOuter}:Left); second in which
+quadcopter has to surround multiple planes (Figure \ref{fig:pathInnerOuter}:Right).
+In both cases, we will cover individual planes as in the base case.  In the
+first case, quadcopter will first rotate around its Z-axis before approaching
+second plane. In the second case, quadcopter will move in circular trajectory
+while moving from one plane to another plane. The control strategies for this
+case is more complicated.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\linewidth]{furtherWork/pathInner}
+\includegraphics[width=0.45\linewidth]{furtherWork/pathOuter}
+\caption{Schematic of path planning of quadcopter for multi-planar
+cases.\textbf{Left:} Quadcopter is surrounded by multiple planes. 
+\textbf{Right:} Quadcopter has to surround multiple planes.}
+\label{fig:pathInnerOuter}
+\end{figure}
 
 \section{Quadcopter-based Stagnant Water Identification}
 
@@ -597,13 +668,12 @@ there is no one single magic bullet to tackle the disease.
 Our work, started prior to the announcement of ``Project
 Premonition,'' is similar to that of \cite{Microsoft15}.  Instead of
 attempting to destroy the mosquito, we seek to detect the reason for
-the increased outbreak, especially in urban areas.  The work reported
-in this paper complements that of \cite{Microsoft15} --- the goal in \cite{Microsoft15}
-is to ``catch wild mosquitoes'' (typically in the outfield) by
-creating novel mosquito traps, and then to test mosquitoes for
-pathogens. New traps are placed by drones, and retrieved by drones.
-In contrast, this paper emphasizes the need for identifying the
-location of these traps.  
+the increased outbreak, especially in urban areas.  Our work complements that
+of \cite{Microsoft15} --- the goal in \cite{Microsoft15} is to ``catch wild
+mosquitoes'' (typically in the outfield) by creating novel mosquito traps, and
+then to test mosquitoes for pathogens. New traps are placed by drones, and
+retrieved by drones. In contrast, our work emphasizes the need for
+identifying the location of these traps.  
 
 \begin{figure}[h!]
 \centering
@@ -769,7 +839,7 @@ in Fig.~\ref{fig:workflow}.
 All our experiments have been completed with the inexpensive consumer
 quadcopter called Parrot's AR Drone. We remark that one should not
 compare expensive military grade drones with such inexpensive drones.
-For the purpose of showing the efficacy of this paper, we also took a
+For the purpose of showing the efficacy of our method, we also took a
 picture of the scene from a distance with a 5 mega-pixel camera for
 the reader to better understand the scene.  We covered urban places
 such as terraces, constructions sites, building backyards,
