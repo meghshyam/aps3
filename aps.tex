@@ -109,9 +109,79 @@ presents new challenges.  We provide methods to get past such hurdles.
 %\begingroup\def\thispagestyle#1{}\def\baselinestretch{1.5}\tableofcontents\endgroup
 \newpage
 
-\section{Motivation}
 \section{Introduction}
+
 \section{Mosaicing Scenes with Vacant Spaces}
+
+Finding features and using them to align images to construct wide field
+of view panoramas is one of the success stories of
+computer vision.  Virtually all recent consumer cameras have this
+technology embedded.  The success of these methods relies significantly on
+finding common features in the images that can be used to established the
+ appropriate warps to register the images together.
+
+There are scenes, however, that consist of image content that makes this
+challenging.  One situation is when scene patterns and texture are repeated.  
+This can make it challenging for matching algorithm to find appropriate matches.
+A more serious situation is when a scene area simply
+does not contain features.  This sort of situation occurs in a variety
+of situations such as paintings in an art exhibition, or posters in an
+auditorium.
+
+{\bf Key Idea} We propose to solve the vacant space problem by using
+an inexpensive off-the-shelf flying device, such as a quadcopter which
+can be assumed to contain an inertial measurement unit (IMU) that has
+positional information time synchronized with an input video.  The
+proximity relationship that the resultant images have, can be used to
+significantly reduce the search space in finding matches.  Further,
+the proximity relationship also allows, in principle, to vary the
+parameters involved in feature selection. For example, if there is
+reason to believe that two images are adjacent horizontally, one can
+choose to adjust thresholds in feature matching algorithm to hunt for
+otherwise elusive matching pairs.
+
+We note that positions can be also made available in other devices
+such as smartphones.  An autonomous programmed quadcopter, however, is
+particularly enticing because of its ability to fly to areas that are
+accessible to the human eye, but inaccessible for the
+human to reach.  Such areas do not lend themselves easily to high
+quality images.
+
+\subsection{Related Work}
+Panoramic image stitching (alternatively, image mosaicing) is a
+well-studied problem in the field of computer vision.  Representative
+works include~\cite{Milgram1975}, \cite{Milgram1977}, \cite{Capel},
+\cite{Szeliski1997} \cite{Brown07} \cite{Brown03}.  A full discussion
+on related works is outside the scope of this paper, readers are
+referred to~\cite{Szeliski05imagealignment} for an excellent survey.
+Given the maturity of this area, there are various freeware as well as
+commercial software available for performing image stitching; most
+notable are AutoStitch \cite{autostitch}, Microsoft\textsc{\char13}s Image
+Compositing Editor \cite{ICE}, and Adobe\textsc{\char13}s Photoshop
+\cite{photoshop}.
+
+All of these methods are based on a similar strategy of finding
+features in each image, matching these features between images, and
+then computing pairwise image warps to align them together.  A global
+bundle adjustment is often applied to globally refine the alignment.
+All of the aforementioned methods assume the imaged scene is planar or
+that the camera has been rotated carefully around its center of
+projection to avoid parallax.
+
+Brown et al.~\cite{Brown05} have used a new type of invariant features
+located at Harris corners in discrete scale-space and oriented using a
+blurred local gradient for stitching. Eden et al.~\cite{Eden} were
+able to stitch images with large exposure difference as well as large
+scene motion into single HDR quality image without using any
+additional camera hardware.
+
+All of the image mosaicing methods work only when there is a
+``intersection'' in feature space of images to be stitched. When there
+are ``gaps'' (either physical or due to lack of features) between
+images to be stitched it is not clear how to perform the stitching. In
+this paper, we discuss how to use the available IMU data that
+accompanies our input images to help overcome these problems.
+
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\textwidth]{mosaicing/figures/Workflow} 
@@ -129,6 +199,42 @@ presents new challenges.  We provide methods to get past such hurdles.
 
 \section{Quadcopter-based Stagnant Water Identification}
 
+Dengue~\cite{WHO15Dengue} is a troublesome debilating disease with no
+known preventing vaccine, or cure. Doctors advocate that the best way
+to avoid this disease is to avoid being bitten by mosquitoes which is
+virtually an impossibility for many people in India.  The greatest
+risk of contracting dengue (pronounced DENgee) is in the Indian
+subcontinent.  
+
+Technology is a must in tackling this situation.  The risk of disease
+can be reduced by using insect repellents. In our institute, the
+common method has been the spraying of insecticides.  Reports in the
+media~\cite{china} indicate that China has flooded a small island
+releasing half a million sterile mosquitoes to dominate the potent
+mosquitoes. Such measures have unknown and unforeseen environmental
+impact on the eco-system. Regardless, researchers are convinced that
+there is no one single magic bullet to tackle the disease. 
+
+Our work, started prior to the announcement of ``Project
+Premonition,'' is similar to that of \cite{Microsoft15}.  Instead of
+attempting to destroy the mosquito, we seek to detect the reason for
+the increased outbreak, especially in urban areas.  The work reported
+in this paper complements that of \cite{Microsoft15} --- the goal in \cite{Microsoft15}
+is to ``catch wild mosquitoes'' (typically in the outfield) by
+creating novel mosquito traps, and then to test mosquitoes for
+pathogens. New traps are placed by drones, and retrieved by drones.
+In contrast, this paper emphasizes the need for identifying the
+location of these traps.  
+
+One of the major reasons behind the growth of mosquitoes is the
+continuous existence of \emph{water puddles} around residencies in
+urban India.  The virus is carried by mosquitoes, and these breed in
+stagnant water. \emph{Can we detect stagnant water?}  When we surveyed
+terraces (Fig.~\ref{teaser}) and ``chajjas'' of various buildings in
+our institute, we found split AC air conditioners dumping condensed
+water. Such areas can be surveyed using autonomous quadcopters.
+
+\subsection{Related Work}
 The method in ~\cite{santana12} for detection of
 water relies on the chaotic nature of water's dynamic texture to
 exploit a measure of entropy over the trajectories obtained from
@@ -149,7 +255,7 @@ rules seem unlikely to be readily applicable.}
 Our method is based on a combination of color based method with an optical flow
 based method.  We establish the need for the combination in the first two subsections.
 
-\textbf{Appearance-based Detection}
+\noindent\textbf{Appearance-based Detection}
 
 \begin{figure}[h!]
   \centering
@@ -189,9 +295,9 @@ feature based SVM detector. However, false negatives are also produced
 since other reflected regions such as trees, buildings, etc. are
 usually classified as non-puddle regions as many of these
 characteristics is shared by negative images in the training data set.
+\vspace{0.5cm}
 
-
-\subsection{Optical flow based Detection}
+\noindent\textbf{Optical flow based Detection}
 Fortunately our images are captured by a moving quadcopter.  The
 optical flow measures apparent motion of objects in a scene caused by
 relative motion between camera and object. The magnitude of the
@@ -288,8 +394,9 @@ from Fig.~\ref{fig:comparison} that in all images, \cite{rankin2004daytime} is
 confusing  bright patches as puddle patches (note red patches on walls, sky etc.
 in middle column in Fig.~\ref{fig:comparison}). Also, \cite{rankin2004daytime}
 is not able to detect textured puddle images (as seen in the first row in
-Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red hue in the output image.
-So, darker the red tinge, higher the confidence in detected water region. )
+Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red
+hue in the output image. So, darker the red tinge, higher the confidence in
+detected water region. )
 
 \begin{figure}
   \centering
