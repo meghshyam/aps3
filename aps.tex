@@ -399,7 +399,7 @@ interesting images from a video, and to generate the super-panorama,
 as well as the data sets used in this paper will be made publicly
 available.
 
-\subsection{Selecting Images}
+\noindent\textbf{Selecting Images}
 
 In our first experiment, we wanted to ensure that the selection of
 images done was comprehensive and useful.  We sent the drone to image 
@@ -415,7 +415,6 @@ given to Autostitch or to Adobe Photoshop, we find
 (Figure~\ref{fig:sac3}(b)) that these programs are able to produce
 some output, but the results are not satisfactory.
 
-% MSB - no details to the saliency selection algorithm.
 Instead of feeding time-sampled images, we ran our saliency selection
 algorithm (as explained in Section~\ref{sec:selection}) on the video
 which resulted in $N = 5$ images.  Though the number of input images
@@ -427,10 +426,9 @@ Many of the images are similar to the time sampled version; however,
 the occasional differences are enough to make Autostitch work. The
 results are shown in Figure~\ref{fig:sac3}(d).
 
-
 \begin{figure*}[h!]
 \centering
-\includegraphics[width=0.87\linewidth]{mosaicing/figures/ValidationResult}
+\includegraphics[width=0.87\linewidth]{mosaicing/results/ValidationResult}
 \caption{ (a) Uniformly sampled images from an outdoor video
   expedition.  (b) Output of the state of the art photo stitchers
   (left:Autostitch, right:Adobe Photoshop CS6) on uniformly time
@@ -445,17 +443,39 @@ results are shown in Figure~\ref{fig:sac3}(d).
 \label{fig:sac3}
 \end{figure*}
 
-In summary, this experiment provides evidence to show that (a) our
+We tested our salient image selection algorithm on another
+input stream which had about 9000 images. The selection algorithm of Section
+\ref{sec:selection} pruned the video into $N=15$ images. The scene as captured
+by a typical camera can  be seen in Figure~\ref{fig:validResults}(a). A sample
+of the selected images are seen in Figure~\ref{fig:validResults}(b).
+Figure~\ref{fig:validResults}(c,d,e) shows the comparison of outputs of the state
+of the art stitching methods with the output of our algorithm. The input scene
+is such that there are no vacant spaces; our stitching algorithm's output is
+similar to that of Autostitch \cite{autostitch} as well as Photoshop
+\cite{photoshop}. Results on this dataset again demonstrates that programs like
+Autostitch, Photoshop can correctly stitch images selected by our algorithm
+(when there are no vacant spaces).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.87\linewidth]{mosaicing/results/sac1}
+\caption{ (a) An outdoor scene captured by a standard camera.  (b) Salient image selection from the set of
+  approximately 9000 images using positional information. (c) Output of
+  Autostitch \cite{autostitch} on the images selected by our algorithm. (d) Output of Adobe Photoshop CS6
+  \cite{photoshop} on the selected images. (e) Output from this paper.}
+\label{fig:validResults}
+\end{figure}
+
+In summary, these experiments provides evidence to show that (a) our
 saliency selection algorithm is reasonable and (b) our stitching
 results are comparable to that of Autostitch for the kind of scenes
 considered.
 
-\subsection{Indoor Imagery with Vacant Spaces}
+\noindent\textbf{Indoor Imagery with Vacant Spaces}
 
 Our next selection of experiments were conducted in an indoor
-environment.  The input stream had about 4300
-images. The selection algorithm (Section~\ref{sec:selection}) pruned the video
-into $N=4$ images.
+environment.  The input stream had about 4300 images. The selection algorithm
+(Section~\ref{sec:selection}) pruned the video into $N=4$ images.
 A sample of the selected images are seen in Figure~\ref{fig:teaser}.
 
 \begin{figure}[t!]
@@ -467,24 +487,6 @@ A sample of the selected images are seen in Figure~\ref{fig:teaser}.
     vacant space (third picture on the left) does not seem to have any
     matchable features with subsequent input images.}
 \end{figure}
-
-\begin{figure*}[h!]
-\centering
-\includegraphics[width=0.86\linewidth]{mosaicing/figures/results}
-\caption{(a) An outdoor scene captured by a standard camera in an
-  exhibition. The approach to the area is normally cordoned off and one
-  needs permission to get a quadcopter to take the picture.  Notice a
-  significant gap between the two posters.  (b) Pruned images from the
-  quadcopter video using our saliency algorithm. (c) Output of
-  Autostitch on the selected images. The mosaic is not reasonable
-  presumably because of the confusion in features. (d) Output of Adobe
-  Photoshop CS6 on the selected images. The vacant space posed a
-  problem to the feature matching algorithm, so instead of a mosaic,
-  individual pieces were output as mini-panoramas (e) Our output on
-  the selected images. We are able to join two posters (separated by
-  vacant space) using IMU data.}
-\label{fig:results}
-\end{figure*}
 
 There were two disconnected components in the resulting graph.
 Autostitch was unable to produce any reasonable output as seen in
@@ -500,6 +502,77 @@ captured by a smartphone can also be seen, as well as the comparison
 of outputs of state of the art stitchers with output of our
 algorithm. Figure~\ref{fig:results} shows the comparison of outputs of
 state of the art stitchers with the output of our algorithm.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.86\linewidth]{mosaicing/results/results}
+\caption{(a) An outdoor scene captured by a standard camera in an
+  exhibition. The approach to the area is normally cordoned off and one
+  needs permission to get a quadcopter to take the picture.  Notice a
+  significant gap between the two posters.  (b) Pruned images from the
+  quadcopter video using our saliency algorithm. (c) Output of
+  Autostitch on the selected images. The mosaic is not reasonable
+  presumably because of the confusion in features. (d) Output of Adobe
+  Photoshop CS6 on the selected images. The vacant space posed a
+  problem to the feature matching algorithm, so instead of a mosaic,
+  individual pieces were output as mini-panoramas (e) Our output on
+  the selected images. We are able to join two posters (separated by
+  vacant space) using IMU data.}
+\label{fig:results}
+\end{figure}
+
+Next input stream had about 9100 images. The selection algorithm pruned the
+video into $N=28$ images. The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:results1}(a). A sample of the selected images are seen in
+Figure~\ref{fig:results1}(b). Figure~\ref{fig:results1}(c,d,e) shows the
+comparison of outputs of state of the art stitchers with the output of our
+algorithm. As there are vacant spaces, Autostitch~\cite{autostitch} as well as
+Photoshop~\cite{photoshop} are unable to stitch images accurately. In contrast,
+since we use positional data, our output is an acceptable mosaic, and shows an
+orthographic view.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\linewidth]{mosaicing/results/orange_blue.pdf}
+\caption{(a) An outdoor scene captured by a standard camera in an
+  exhibition. The approach to the area is normally cordoned off and one
+  needs permission to get a quadcopter to take the picture.  Notice a
+  significant gap between the two posters.  (b) Pruned images from the
+  quadcopter video using our saliency algorithm. (c) Output of
+  Autostitch~\cite{autostitch} on the selected images. The mosaic is not
+  reasonable presumably because of the confusion in features. (d) Output of Adobe
+  Photoshop CS6~\cite{photoshop} on the selected images. The vacant space posed
+  a problem to the feature matching algorithm, so instead of a mosaic,
+  individual pieces were output as mini-panoramas (e) Our output on
+  the selected images. We are able to join two posters (separated by
+  vacant space) using IMU data.}
+\label{fig:results1}
+\end{figure}
+
+The input stream had about 8500 images. The selection algorithm pruned the video
+into $N=17$ images.The scene as captured by a smartphone can also be seen in
+Figure~\ref{fig:results2}(a). A sample of the selected images are seen in
+Figure~\ref{fig:results2}(b). Figure~\ref{fig:results2}(c,d,e) shows the
+comparison of outputs of state of the art stitchers with the output of our
+algorithm. As there are vacant spaces, Autostitch~\cite{autostitch} as well as
+Photoshop~\cite{photoshop} are not able to stitch images accurately. In
+contrast, since we use positional data, our output is an acceptable mosaic.
+
+\begin{figure*}[h!]
+\centering
+\includegraphics[width=0.85\linewidth]{mosaicing/results/Purple_red}
+\caption{(a) An outdoor scene captured by a standard camera in an
+  exhibition. Notice a significant gap between the two posters.  (b) Pruned
+  images from the quadcopter video using our saliency algorithm. (c) Output of
+  Autostitch~\cite{autostitch} on the selected images. The mosaic is not
+  reasonable presumably because of the confusion in features. (d) Output of Adobe
+  Photoshop CS6~\cite{photoshop} on the selected images. The vacant space posed a
+  problem to the feature matching algorithm, so instead of a mosaic,
+  individual pieces were output as mini-panoramas (e) Our output on
+  the selected images. We are able to join two posters (separated by
+  vacant space) using IMU data.}
+\label{fig:results2}
+\end{figure*}
 \subsection{Path Planning}
 \subsection{Multi-planar Cases}
 
