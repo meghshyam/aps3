@@ -182,6 +182,31 @@ images to be stitched it is not clear how to perform the stitching. In
 this paper, we discuss how to use the available IMU data that
 accompanies our input images to help overcome these problems.
 
+\subsection{Methodology}
+Our goal is to compute a panorama of a scene lying on
+planar surface that has regions of vacant spaces.  A schematic for
+this problem is shown in Figure~\ref{fig:schematic}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.49\textwidth]{mosaicing/figures/indoor}
+  \includegraphics[width=0.49\textwidth]{mosaicing/figures/stereoOverlap}
+
+  \caption{ \label{fig:schematic} Problem definition. (Left) Vacant spaces
+    are encountered in various scenes.  When individual portions are
+    captured by a quadcopter, how does one create the complete mosaic
+    given that common features are either not available, or
+    confusing?\\
+    (Right) Simplified reduction of the problem to a geometrical structure.
+  }
+\end{figure}    
+
+The method adopted is pictorially depicted in the overview shown in
+Figure~\ref{fig:workflow} and is described in detail later on.  In
+brief, we systematically acquire a video of the scene, reduce the large
+number of images into a manageable number, and finally combine the
+images acquired from different positions into a mosaic.
+
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\textwidth]{mosaicing/figures/Workflow} 
@@ -193,7 +218,169 @@ accompanies our input images to help overcome these problems.
     stitching techniques are used to create mini-panoramas which are
     then joined together into super panorama 
     again using IMU data.}
-\end{figure}
+\end{figure}    
+
+\noindent\textbf{Video acquisition}
+We first despatch the quadcopter to as close to the scene as
+possible. The corners of a rectangular area of interest is provided to
+the quadcopter, and it is programmed to traverse the area in a snake
+like raster scan fashion.  There are various control aspects involved
+in sending a quadcopter; in outdoor areas, the quadcopter is impacted
+by wind and it might lose its way.  The control aspects of the
+quadcopter is beyond the scope of this paper.
+
+The quadcopter returns with a video of the scene.  Any short video of
+about a minute or more when given to a stitching program such as
+Autostitch overwhelms the program, rendering it unusable. In the rest
+of this section, we use Autostitch to indicate state of the art
+stitching programs such as Autostitch, Photoshop, etc.
+
+\noindent\textbf{Acquiring interesting images}
+\label{sec:selection}
+Our goal in this step is to reduce the amount of input data and
+produce a set of interesting images.  In other words, we wish to
+convert a video into an album of images.  The key difference between
+our problem and standard albumization \cite{Aner, Lee} is the use of 
+positional information.  A standard quadcopter has an inertial
+measurement unit (IMU) that, after calibration, can give accurate
+information of positions.
+
+Using this it is possible to cluster the images, and sort the images
+into an $m\times n$ grid.  (Occasionally we have encountered outlier
+situations and thus erroneous positional information.  Thus we believe
+standard vision-based clustering method can be used to either drop
+frames, or to correctly include frames based on image content.)  The
+number of cluster centers is automatically determined using the
+agglomerative bottom up hierarchical clustering method \cite{Lior}, with the
+additional requirement that the whole scene (represented by the
+positional data) is covered.  
+
+{\bf Clustering Details} We assume that each IMU data position
+corresponds to an image of definite fixed dimensions.  Consider each
+position of the IMU data to be a leaf node. Two nodes are greedily
+combined based on the closest Euclidean distance, and replaced with an
+internal node.  The position of the internal node is set to be the
+centroid of the two nodes, and each internal node now corresponds to a
+virtual image taken by a virtual quadcopter.  The algorithm
+recursively merges all the nodes till we end up with a root.  In the
+next phase, we proceed top-down and level by a level to find the
+cluster centers.  A set of nodes is considered for being the output as
+cluster centers if the union of these nodes completely cover the
+scene. From the bottom-up construction, it is clear that the root will
+represent a single position, and thus a single image and most likely
+will not cover the scene.  At the other extreme, the set of all leaf
+nodes \emph{will} cover the scene.  The top-down algorithm proceeds
+from root and finds the minimal set of nodes which cover the scene.
+Once cluster centers are found, we pick the leaf node which is closest
+to the cluster center to find a real image.
+This process is pictorially described in
+Figure~\ref{fig:selection}.
+
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{mosaicing/figures/selection} 
+  \caption{ \label{fig:selection} Using IMU data, an image stream is
+    transformed into a set of interesting images for purpose of
+    panorama creation. }
+\end{figure}    
+
+In practice, the number of cluster centers for the scenes we have
+covered is now within the capacity of Autostitch.  As mentioned in the
+introduction, as long as there are sufficiently varying and
+``matchable'' features, Autostitch is able to perform a reasonable
+result.  However, if there are very few features in overlapping region
+of two images, then the output is not acceptable. This situation will
+arise when there is vacant space between two pictures.
+
+{\bf Time complexity} Autostitch has not been designed
+to use positional information. As a result if there are $N$ input
+images, the program has to consider possible matches in approximately
+$O(N^2)$ set of areas.  Our program is able to mosaic in an $O(N)$
+fashion.
+
+% MSB - There are no details to the clustering, or the "postulating" of edges.
+{\bf Spanning Trees}
+Specifically, we assume at this point that the interesting photos are
+available in the form of a $m \times n$ grid. First, we find SURF
+\cite{Bay} features for each image in a grid. Next, we use Best of
+Nearest Neighbor matcher (from the OpenCV library) with Random Sample
+Consensus (RANSAC) \cite{Fischler1981} to find geometrically
+consistent matches between neighborhood images inside grid.  We
+create a graph with images being nodes, and add an edge between two
+nodes if there are sufficient matches. We have to recall at this point
+that if there are ``vacant spaces'' there will not be enough features
+for successful matches; the graph will end up with multiple
+(disconnected) components.  We next compute multiple spanning trees
+for the various components. Given a spanning tree, the center of the
+spanning tree is a node from which the distance to all other nodes is
+minimal \cite{Kocay}. Next we calculate the homography of each image with respect
+to spanning tree center.  Finally, for each spanning tree, we stitch
+all pictures using the computed homographies by warping all images
+with reference to the image at spanning tree center. The spanning tree is
+an $O(N)$ structure. The process is described in
+Figure~\ref{fig:graph}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{mosaicing/figures/graphCreation} 
+  \caption{ \label{fig:graph} Interesting images acquired are
+    segmented and individual (mini-panoramas) are constructed. These
+    are then later combined into the desired super-panoramas using IMU data.}
+\end{figure}    
+
+\noindent\textbf{Super-panoramas}
+  
+In this section, we consider the situation when programs like
+Autostitch fail.  We assume that the output of the previous step has
+resulted in multiple spanning trees where each spanning tree center
+corresponds to a specific depth. This is the depth of the center of
+the spanning tree, since we have stitched all images by taking the
+spanning tree center as a reference.  Individual panoramas for each
+spanning tree termed mini-panoramas have been created. A
+super-panorama must be created from mini-panoramas; these usually
+correspond to different depths for at least two reasons.
+
+First, it is invariably difficult, if not impossible, to control a
+quadcopter to be at the exact depth even in indoor scenes.  The
+aerodynamics and the thrust produced tends to make the quadcopter
+drift.  Second, it might also be necessary to let the quadcopter probe
+and come closer to the scene so as to get a ``good picture''.
+
+A super-panorama is done using a two step process. Assume two trees in
+the forest corresponding to area A and area B of the scene (see
+Figure~\ref{fig:stereo}). 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.45\textwidth]{mosaicing/figures/move} 
+  \includegraphics[width=0.45\textwidth]{mosaicing/figures/stereo} 
+  \caption{ \label{fig:stereo} (Left) The virtual picture as seen from position
+  B' is computed using Equation~\ref{eq:moveRelation} from the real picture
+    taken from B.  (Right) Using the disparity, and the baseline width,
+  it is possible to depict the composite scene obtained from both A
+  and B' (from the view point of A).}
+\end{figure}    
+Assume that a mini-panorama is created from these two areas, and the
+depth of the planar surface from the camera is more for A, than for
+B. We then take the mini-panorama image captured at B, and `move' it to
+a new location B’ whose depth (from the imaged surface) is the same as
+that of A. The resulting image  will be smaller; the images are
+related by the equation
+\begin{equation}
+  \label{eq:moveRelation}
+  {\bf \frac{x'}{x} = \frac{Z}{Z'}}
+\end{equation}
+where {\bf x} (respectively {\bf x'}) represents a pixel location of
+the image in B (respectively, B') and 
+{\bf Z} (respectively {\bf Z'}) represents the depth of the images
+surface from B (respectively, B').
+
+We can now treat the resulting images from A (unchanged) and B’
+(computed from Equation~\ref{eq:moveRelation}) forming a stereo pair.
+Using the stereo disparity formula we can ``place,'' from the view
+point of A, the image captured from B, thereby creating a
+super-panorama.
+
 \subsection{Path Planning}
 \subsection{Multi-planar Cases}
 
@@ -254,7 +441,7 @@ rules seem unlikely to be readily applicable.}
 \subsection{Methodology}
 Our method is based on a combination of color based method with an optical flow
 based method.  We establish the need for the combination in the first two subsections.
-
+\vspace{0.5cm}
 \noindent\textbf{Appearance-based Detection}
 
 \begin{figure}[h!]
@@ -343,8 +530,9 @@ inability to distinguish true ``far away'' regions versus imagined far
 away regions due to the mirror-like properties of water.  To handle
 these false positives, we devise a horizon mask based on the principle
 that water flows down.
+\vspace{0.5cm}
 
-\textbf{Combined approach}
+\noindent\textbf{Combined approach}
 
 \textbf{Horizon Mask:} The change in depth for far-away scenes as well
 as their ref	lections on puddle, in consecutive frames, are hard to
@@ -389,14 +577,13 @@ types of datasets, each having around two-three minutes of video
 \textbf{Comparison:} We compare our method to \cite{rankin2004daytime} on
 representative images since the methods in \cite{rankin11} do not apply. 
 %See Fig.~\ref{fig:comparison}. 
-It can be seen
-from Fig.~\ref{fig:comparison} that in all images, \cite{rankin2004daytime} is
-confusing  bright patches as puddle patches (note red patches on walls, sky etc.
-in middle column in Fig.~\ref{fig:comparison}). Also, \cite{rankin2004daytime}
-is not able to detect textured puddle images (as seen in the first row in
-Fig.~\ref{fig:comparison}). (The confidence in detection is indicated by red
-hue in the output image. So, darker the red tinge, higher the confidence in
-detected water region. )
+It can be seen from Fig.~\ref{fig:comparison} that in all images,
+\cite{rankin2004daytime} is confusing  bright patches as puddle patches (note
+red patches on walls, sky etc. in middle column in Fig.~\ref{fig:comparison}).
+Also, \cite{rankin2004daytime} is not able to detect textured puddle images (as
+seen in the first row in Fig.~\ref{fig:comparison}). (The confidence in
+detection is indicated by red hue in the output image. So, darker the red
+tinge, higher the confidence in detected water region.)
 
 \begin{figure}
   \centering
