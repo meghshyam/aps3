@@ -86,8 +86,8 @@ we determine appropriate portions of the images to complete the panorama. We
 demonstrate the efficacy of our approach on a number of input sequences that
 cannot to be mosaiced by existing methods.
 
-After using quadcopter for mosaicing of images, we thought of using it for 
-some ``survey'' application. In recent times, there has been a sharp increase
+After using quadcopter for mosaicing of images, we used it for 
+``survey'' application. In recent times, there has been a sharp increase
 in dengue and malaria, especially in urban areas. One of the major reasons for
 this health hazard is the number of locations where one can find stagnant
 water. These locations are large breeding ground for fast multiplying
@@ -109,7 +109,46 @@ presents new challenges.  We provide methods to get past such hurdles.
 %\begingroup\def\thispagestyle#1{}\def\baselinestretch{1.5}\tableofcontents\endgroup
 \newpage
 
-\section{Introduction}
+\section{Motivation}
+In the last APS, we have seen the design and detection of a blur resilient
+fiducial for the quadcopter. Such fiducial is required for the purpose of
+tracking objects by a quadcopter. After solving tracking problem, we are using
+quadcopter for actual imaging and developing applications based on it.
+
+First application we have developed is ``Panoramic Image Stitching'' through
+quadcopter. It will be very tedious to get panorama of a long wall like one
+shown in Figure \ref{fig:wall}. So, we used quadcopter to ``cover'' such planar
+objects.
+Then, using our image selection algorithm find out ``appropriate'' images and then
+stitched those images to get final mosaic. Panormaic image stitching
+becomes even more problematic when there are vacant spaces in the captured
+scene as lack of features restrains homography based warping. We solved this
+problem using approximate positional information acquired through quadcopter.
+
+\begin{figure}
+ \centering
+  \includegraphics[width=\linewidth]{IMG_20150415_155624.jpg}
+  \caption{A sample wall we try to cover using quadcopter.}
+  \label{fig:wall}
+\end{figure}
+
+Second application we developed is ``Stagnant water detection'' using
+quadcopter. We found around our institute campus, there are lot of places
+which do not attract much attention but water gets easily accumulated around
+such areas (as shown in Figure \ref{fig:puddle}). Such puddles are perfect
+locations for mosquitoes which spread deadly diseases like dengue, for breeding.
+Hence, we thought of using quadcopter to ``survey'' the campus using quadcopter
+and detect places where water gets stagnated.
+
+\begin{figure}
+ \centering
+  \includegraphics[width=\linewidth]{IMG_20150302_160349385_HDR.jpg}
+  \caption{Sample water puddle found near residential places in our institute.}
+  \label{fig:puddle}
+\end{figure}
+ 
+In summary, we have explored technical problems in the domain of computer
+vision for novel applications using quadcopter.
 
 \section{Mosaicing Scenes with Vacant Spaces}
 
@@ -299,7 +338,6 @@ images, the program has to consider possible matches in approximately
 $O(N^2)$ set of areas.  Our program is able to mosaic in an $O(N)$
 fashion.
 
-% MSB - There are no details to the clustering, or the "postulating" of edges.
 {\bf Spanning Trees}
 Specifically, we assume at this point that the interesting photos are
 available in the form of a $m \times n$ grid. First, we find SURF
@@ -892,6 +930,21 @@ So, darker the red tinge, higher the confidence in detected water regions. \text
 \label{fig:comparison}
 \end{figure}
 
+\section{Future Work in Stagnant Water Detection}
+Though, our results are better than the existing methods, the results can be improved and the scope
+extended in the following directions:
+\begin{itemize}
+  \item Determination of Horizon from environmental cues could be improved and made
+  more robust in order to deal with factors such as illumination changes,
+  occlusions and unavailability of artifacts. Also, the parameters involved
+  could be automatically estimated through training.
+  \item The score obtained from optical flow magnitudes could be improved by
+  using the directional components separately, and combine them with
+  corresponding quadcopter motion vectors like velocity and acceleration.
+  \item The feature using for classifier to obtain the SVM score could be
+  modified to produce greater separation between puddle and non-puddle region
+  patches.
+\end{itemize}
 \newpage
 \bibliographystyle{plain}
 \bibliography{egbib}
