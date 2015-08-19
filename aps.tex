@@ -106,17 +106,16 @@ get past such hurdles.
 \newpage
 
 \section{Motivation}
-In the last APS, we have seen the design and detection of a blur resilient
-fiducial for the quadcopter. Such a fiducial is required for tracking objects by
-a quadcopter. After finding a possible solution for the tracking problem, we are
-using quadcopter for actual imaging and developing applications based on it.
+In the last APS, we have seen the design and detection algorithm of a blur
+resilient fiducial for the quadcopter. Such a fiducial is required for tracking objects by
+a quadcopter. After finding a possible solution for the tracking problem, we
+used quadcopter for actual imaging and developing applications based on it.
 
 The first application that we have developed is ``Panoramic Image Stitching''
 through quadcopter. It will be very tedious to get panorama of a long wall like one
 shown in Figure \ref{fig:wall}. So, we used quadcopter to ``cover'' such planar
-objects.
-Then, using our image selection algorithm find out ``appropriate'' images and then
-stitched those images to get final mosaic. Panoramic image stitching
+objects. Then, using our image selection algorithm, we found out ``appropriate'' images
+and then stitched those images to get final mosaic. Panoramic image stitching
 becomes even more problematic when there are vacant spaces in the captured
 scene as lack of features restrains homography based warping. We solved this
 problem using approximate positional information acquired through quadcopter.
@@ -134,8 +133,8 @@ much attention but water gets easily accumulated around such areas (as shown in
 Figure \ref{fig:puddle}). Such puddles are perfect locations for mosquitoes to
 breed and spread deadly diseases like dengue. These puddles are formed mainly in
 places such as terraces, window shades etc. Surveying such places manually is
-very difficult. So, we used quadcopter to ``survey'' the campus using quadcopter
-and detect places where water gets stagnated.
+very difficult. So, we used quadcopter to ``survey'' the campus and detect
+places where water gets stagnated.
 
 \begin{figure}[ht!]
  \centering
@@ -153,7 +152,7 @@ Finding features and using them to align images to construct wide field
 of view panoramas is one of the success stories of
 computer vision.  Virtually all recent consumer cameras have this
 technology embedded.  The success of these methods relies significantly on
-finding common features in the images that can be used to established the
+finding common features in the images that can be used to establish the
  appropriate warps to register the images together.
 
 There are scenes, however, that consist of image content that makes this
@@ -161,7 +160,7 @@ challenging.  One situation is when scene patterns and texture are repeated.
 This can make it challenging for matching algorithm to find appropriate matches.
 A more serious situation is when a scene area simply
 does not contain features.  This sort of situation occurs in a variety
-of situations such as paintings in an art exhibition, or posters in an
+of scenarios such as paintings in an art exhibition, or posters in an
 auditorium.
 
 {\bf Key Idea} We propose to solve the vacant space problem by using
