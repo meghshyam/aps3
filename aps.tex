@@ -49,9 +49,11 @@
 \section*{Acknowledgements}
 I express deep and sincere gratitude to Prof. Sharat Chandran and Prof.
 Michael Brown for providing constant direction and guidance. I am also
-very much grateful to Prof. David Hsu for giving me access to his lab and
-equipments. I am also thankful to Mr. Abhishek Chakrborty and Mr. Ravi Chalasani
-for their help in stagnant water detection project.
+very grateful to Prof. David Hsu for giving me access to his lab and
+equipments. I take this opportunity to thank Mr. Anirudh Vemula 
+for his help in Mosaicing project. I am indebted to him for his help in data
+collection for the project. I am also thankful to Mr. Abhishek Chakrborty and
+Mr. Ravi Chalasani for their help in stagnant water detection project.
 
 \begin{flushright}
 Meghshyam G. Prasad
@@ -60,44 +62,38 @@ Meghshyam G. Prasad
 \pagenumbering{roman}
 \newpage
 \begin{abstract}
-In today's world, digital imaging is being extensively used in almost all
-sectors. In some situations, it is quite difficult to take pictures from
-handheld camera. Low cost quadcopters such as Parrot's AR Drone may be used in
-such scenarios to take photos of an object which is otherwise out of reach of normal
-camera. There are two problems involved in it: first to track the given object
-and second to take ``good'' pictures of it. In my last APS we discussed 
-about the first problem. Here, we will see how to take good pictures and use it for
-various applications.
+In today's world, digital imaging is extensively used in many fields. In some
+situations, it is quite difficult to take pictures from handheld camera. Low
+cost quadcopters such as Parrot's AR Drone may be used in such scenarios to
+take photos of an object which is otherwise out of reach of normal camera.
+There are two problems involved: first, track the object and
+second to take ``good'' pictures of that object. In my last APS we discussed
+the first problem. In this report, we will see how to take good pictures and use
+those pictures for various applications.
 
-One of the use case where we may use quadcopter for imaging is to
-capture a panaroma of big wall (or any such planar object). In such cases, it
-will be very tedious and tiring to use hand held camera. Secondly, if there are
-vacant spaces on a wall, it is challenging for existing mosaicing techniques as
-there will be little to no features to match input images. So, in our work, we
-focuses on a method to construct panoramas captured from a quadcopter, that
-consists of scenes with significant regions of vacant spaces.
+One of the scenarios where we may use quadcopter for imaging is to
+capture a panaroma of a big wall (or any such planar object). In such cases, it
+will be very tedious and tiring to use a hand held camera. Secondly, if there
+are spaces with very less ``features'' on a wall, it is challenging
+for existing mosaicing techniques to construct panorama. In our work, we focus
+on methods to construct panoramas from a quadcopter captured scenes with
+significant regions of vacant spaces. We demonstrate the efficacy of our
+approach on a number of input sequences that cannot be mosaiced by existing methods.
 
-We describe a framework that is able to handle this unique input by
-leveraging the availability of the inertial measurement unit (IMU)
-data from the quadcopter that is synchronized with the input images.
-We use the IMU data for two purposes: first to select images which can
-be stitched together. Second, in combination with coarse stereo reconstruction,
-we determine appropriate portions of the images to complete the panorama. We
-demonstrate the efficacy of our approach on a number of input sequences that
-cannot to be mosaiced by existing methods.
-
-After using quadcopter for mosaicing of images, we used it for 
-``survey'' application. In recent times, there has been a sharp increase
-in dengue and malaria, especially in urban areas. One of the major reasons for
-this health hazard is the number of locations where one can find stagnant
-water. These locations are large breeding ground for fast multiplying
-mosquitoes, and other insects. Areas include traditionally uncovered gutters,
-and also terraces of high rise buildings, and shades above windows (popularly
-known as chhajja)-- areas that are hard to reach and access. We propose the use
-of a quadcopter to inspect areas and identify stagnant water patches.  Water
-being specular in nature tends to confound traditional image processing
-methods. Further the use of a non-traditional camera mounted on a quadcopter
-presents new challenges.  We provide methods to get past such hurdles.
+Though, using quadcopter for mosaicing is a challenging application, it has
+restricted social use. Hence, we desired to use quadcopter for an imaging
+application which may be used for a social cause. In recent times, there has
+been a sharp increase in dengue and malaria, especially in urban areas. One of
+the major reasons for this health hazard is the number of locations where one
+can find stagnant water. These locations are large breeding grounds for fast
+multiplying mosquitoes, and other insects. Areas include traditionally
+uncovered gutters, and also terraces of high rise buildings, and shades above
+windows (popularly known as ``chhajja'')-- areas that are hard to reach and
+access. We propose the use of a quadcopter to inspect areas and identify
+stagnant water patches.  Water being specular in nature tends to confound
+traditional image processing methods. Further the use of a non-traditional
+camera mounted on a quadcopter presents new challenges.  We provide methods to
+get past such hurdles.
 
 \noindent \textbf{Keywords:} Quadcopter, Panoramic Image Stitching, Stagnant Water Detection
 
@@ -111,12 +107,12 @@ presents new challenges.  We provide methods to get past such hurdles.
 
 \section{Motivation}
 In the last APS, we have seen the design and detection of a blur resilient
-fiducial for the quadcopter. Such fiducial is required for the purpose of
-tracking objects by a quadcopter. After solving tracking problem, we are using
-quadcopter for actual imaging and developing applications based on it.
+fiducial for the quadcopter. Such a fiducial is required for tracking objects by
+a quadcopter. After finding a possible solution for the tracking problem, we are
+using quadcopter for actual imaging and developing applications based on it.
 
-First application we have developed is ``Panoramic Image Stitching'' through
-quadcopter. It will be very tedious to get panorama of a long wall like one
+The first application that we have developed is ``Panoramic Image Stitching''
+through quadcopter. It will be very tedious to get panorama of a long wall like one
 shown in Figure \ref{fig:wall}. So, we used quadcopter to ``cover'' such planar
 objects.
 Then, using our image selection algorithm find out ``appropriate'' images and then
@@ -125,25 +121,26 @@ becomes even more problematic when there are vacant spaces in the captured
 scene as lack of features restrains homography based warping. We solved this
 problem using approximate positional information acquired through quadcopter.
 
-\begin{figure}
+\begin{figure}[ht!]
  \centering
   \includegraphics[width=\linewidth]{IMG_20150415_155624.jpg}
-  \caption{A sample wall we try to cover using quadcopter.}
+  \caption{A sample long wall.}
   \label{fig:wall}
 \end{figure}
 
-Second application we developed is ``Stagnant water detection'' using
-quadcopter. We found around our institute campus, there are lot of places
-which do not attract much attention but water gets easily accumulated around
-such areas (as shown in Figure \ref{fig:puddle}). Such puddles are perfect
-locations for mosquitoes which spread deadly diseases like dengue, for breeding.
-Hence, we thought of using quadcopter to ``survey'' the campus using quadcopter
+The second application that we developed is Stagnant water identification
+using quadcopter. We found many locations in our institute  which do not attract
+much attention but water gets easily accumulated around such areas (as shown in
+Figure \ref{fig:puddle}). Such puddles are perfect locations for mosquitoes to
+breed and spread deadly diseases like dengue. These puddles are formed mainly in
+places such as terraces, window shades etc. Surveying such places manually is
+very diffcult. So, we used quadcopter to ``survey'' the campus using quadcopter
 and detect places where water gets stagnated.
 
-\begin{figure}
+\begin{figure}[ht!]
  \centering
   \includegraphics[width=\linewidth]{IMG_20150302_160349385_HDR.jpg}
-  \caption{Sample water puddle found near residential places in our institute.}
+  \caption{Sample water puddle in our institute.}
   \label{fig:puddle}
 \end{figure}
  
@@ -685,7 +682,7 @@ cases.\textbf{Left:} Quadcopter is surrounded by multiple planes.
 \label{fig:pathInnerOuter}
 \end{figure}
 
-\section{Quadcopter-based Stagnant Water Identification}
+\section{Stagnant Water Identification}
 
 Dengue~\cite{WHO15Dengue} is a troublesome debilating disease with no
 known preventing vaccine, or cure. Doctors advocate that the best way
@@ -930,7 +927,7 @@ So, darker the red tinge, higher the confidence in detected water regions. \text
 \label{fig:comparison}
 \end{figure}
 
-\section{Future Work in Stagnant Water Detection}
+\section{Future Work in Stagnant Water Identification}
 Though, our results are better than the existing methods, the results can be improved and the scope
 extended in the following directions:
 \begin{itemize}
