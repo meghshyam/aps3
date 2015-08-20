@@ -72,7 +72,7 @@ the first problem. In this report, we will see how to take good pictures and use
 those pictures for various applications.
 
 One of the scenarios where we may use quadcopter for imaging is to
-capture a panaroma of a big wall (or any such planar object). In such cases, it
+capture a panorama of a big wall (or any such planar object). In such cases, it
 will be very tedious and tiring to use a hand held camera. Secondly, if there
 are spaces with very less ``features'' on a wall, it is challenging
 for existing mosaicing techniques to construct panorama. In our work, we focus
@@ -90,10 +90,7 @@ multiplying mosquitoes, and other insects. Areas include traditionally
 uncovered gutters, and also terraces of high rise buildings, and shades above
 windows (popularly known as ``chhajja'')-- areas that are hard to reach and
 access. We propose the use of a quadcopter to inspect areas and identify
-stagnant water patches.  Water being specular in nature tends to confound
-traditional image processing methods. Further the use of a non-traditional
-camera mounted on a quadcopter presents new challenges.  We provide methods to
-get past such hurdles.
+stagnant water patches using a novel technique based on optical flow. 
 
 \noindent \textbf{Keywords:} Quadcopter, Panoramic Image Stitching, Stagnant Water Detection
 
@@ -682,9 +679,9 @@ cases.\textbf{Left:} Quadcopter is surrounded by multiple planes.
 \end{figure}
 
 \section{Stagnant Water Identification}
-Though mosaicing scenes containing vaccant spaces using quadcopter is
+Though mosaicing scenes containing vacant spaces using quadcopter is
 a challenging application, it has limited social use. Hence, we wished to use
-quadcopter in an application which may help a social cause. In this section, we
+quadcopter in an application which may help in a social cause. In this section, we
 will see how quadcopter may be used to ``identify stagnant water'' around
 residential places as stagnant water is the strong candidate behind outbreak of
 deadly diseases like dengue and malaria.
@@ -933,12 +930,12 @@ So, darker the red tinge, higher the confidence in detected water regions. \text
 \label{fig:comparison}
 \end{figure}
 
-\section{Future Work in Stagnant Water Identification}
+\section{Further Work in Stagnant Water Identification}
 Though, our results are better than the existing methods, the results can be improved and the scope
 extended in the following directions:
 \begin{itemize}
-  \item Determination of Horizon from environmental cues could be improved and made
-  more robust in order to deal with factors such as illumination changes,
+  \item Determination of horizon from environmental cues could be improved and
+  made more robust in order to deal with factors such as illumination changes,
   occlusions and unavailability of artifacts. Also, the parameters involved
   could be automatically estimated through training.
   \item The score obtained from optical flow magnitudes could be improved by
@@ -948,6 +945,20 @@ extended in the following directions:
   modified to produce greater separation between puddle and non-puddle region
   patches.
 \end{itemize}
+
+\section{Summary and Future Plan}
+We have developed two novel imaging applications using quadcopter: Mosaicing
+Scenes with Vacant Spaces and Stagnant Water Identification. Our results show
+significant improvement over existing methods in respective applications.
+
+We planned to work in path planning of quadcopter for mosaicing application to 
+improve quality of results. We have completed nearly half of the planned work, 
+while remaining work will be done shortly. We will be also extending the mosaicing
+through quadcopter to multi-planar cases.
+
+Though our current method for stagnant water identification is detecting water
+puddles quite efficiently, we would like to increase the robustness of our
+method by mainly improving upon horizon detection technique.    
 \newpage
 \bibliographystyle{plain}
 \bibliography{egbib}
