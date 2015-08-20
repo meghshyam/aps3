@@ -397,7 +397,7 @@ Figure~\ref{fig:stereo}).
 Assume that a mini-panorama is created from these two areas, and the
 depth of the planar surface from the camera is more for A, than for
 B. We then take the mini-panorama image captured at B, and `move' it to
-a new location B’ whose depth (from the imaged surface) is the same as
+a new location B' whose depth (from the imaged surface) is the same as
 that of A. The resulting image  will be smaller; the images are
 related by the equation
 \begin{equation}
@@ -496,7 +496,7 @@ Autostitch, Photoshop can correctly stitch images selected by our algorithm
 \label{fig:validResults}
 \end{figure}
 
-In summary, these experiments provides evidence to show that (a) our
+In summary, these experiments provide evidence to show that (a) our
 saliency selection algorithm is reasonable and (b) our stitching
 results are comparable to that of Autostitch for the kind of scenes
 considered.
@@ -682,6 +682,12 @@ cases.\textbf{Left:} Quadcopter is surrounded by multiple planes.
 \end{figure}
 
 \section{Stagnant Water Identification}
+Though mosaicing scenes containing vaccant spaces using quadcopter is
+a challenging application, it has limited social use. Hence, we wished to use
+quadcopter in an application which may help a social cause. In this section, we
+will see how quadcopter may be used to ``identify stagnant water'' around
+residential places as stagnant water is the strong candidate behind outbreak of
+deadly diseases like dengue and malaria.
 
 Dengue~\cite{WHO15Dengue} is a troublesome debilating disease with no
 known preventing vaccine, or cure. Doctors advocate that the best way
@@ -726,7 +732,7 @@ continuous existence of \emph{water puddles} around residencies in
 urban India.  The virus is carried by mosquitoes, and these breed in
 stagnant water. \emph{Can we detect stagnant water?}  When we surveyed
 terraces (Fig.~\ref{teaser}) and ``chajjas'' of various buildings in
-our institute, we found split AC air conditioners dumping condensed
+our institute, we found split AC (air conditioners) dumping condensed
 water. Such areas can be surveyed using autonomous quadcopters.
 
 \subsection{Related Work}
@@ -750,6 +756,7 @@ rules seem unlikely to be readily applicable.}
 Our method is based on a combination of color based method with an optical flow
 based method.  We establish the need for the combination in the first two subsections.
 \vspace{0.5cm}
+
 \noindent\textbf{Appearance-based Detection}
 
 \begin{figure}[h!]
@@ -937,7 +944,7 @@ extended in the following directions:
   \item The score obtained from optical flow magnitudes could be improved by
   using the directional components separately, and combine them with
   corresponding quadcopter motion vectors like velocity and acceleration.
-  \item The feature using for classifier to obtain the SVM score could be
+  \item The feature used for classifier to obtain the SVM score could be
   modified to produce greater separation between puddle and non-puddle region
   patches.
 \end{itemize}
